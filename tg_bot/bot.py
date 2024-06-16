@@ -1,24 +1,27 @@
-import logging
-from telegram import Update
-from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler
-from ..data.data import TOKEN
+from ..data.data import BOB_BOT_TOKEN as API_TOKEN
+import telebot
 
 
-logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level=logging.INFO
-)
+bot = telebot.TeleBot(API_TOKEN)
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await context.bot.send_message(
-        chat_id=update.effective_chat.id,
-        text="I'm a bot, please talk to me!"
-    )
 
-if __name__ == '__main__':
-    application = ApplicationBuilder().token('TOKEN').build()
+# Handle '/start' and '/help'
+@bot.message_handler(commands=['help', 'start'])
+def send_welcome(message):
+    bot.reply_to(message, """\
+Hi there, I am EchoBot.
+I am here to echo your kind words back to you. Just say anything nice and I'll say the exact same thing to you!\
+""")
 
-    start_handler = CommandHandler('start', start)
-    application.add_handler(start_handler)
 
-    application.run_polling()
+# Handle all other messages with content_type 'text' (content_types defaults to ['text'])
+@bot.message_handler(func=lambda message: True)
+def echo_message(message):
+    bot.reply_to(message, message.text)
+
+
+<<<<<<< refs/remotes/origin/dev
+bot.infinity_polling()
+=======
+bot.infinity_polling()
+>>>>>>> local
